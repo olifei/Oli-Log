@@ -1,4 +1,4 @@
-baseURL: https://olifei.github.io/Oli-Log/
+baseURL: "https://olifei.github.io/Oli-Log/"
 languageCode: en-us
-title: My New Hugo Site
-theme: ["PaperMod"]
+title: Oli'Log
+theme: [PaperMod]

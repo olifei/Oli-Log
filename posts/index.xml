@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Oli&#39;Log</title>
-    <link>https://olifei.github.io/Oli-Log/</link>
-    <description>Recent content on Oli&#39;Log</description>
+    <title>Posts on Oli&#39;Log</title>
+    <link>https://olifei.github.io/Oli-Log/posts/</link>
+    <description>Recent content in Posts on Oli&#39;Log</description>
     <generator>Hugo -- 0.134.3</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 20 Sep 2024 12:25:02 +0800</lastBuildDate>
-    <atom:link href="https://olifei.github.io/Oli-Log/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://olifei.github.io/Oli-Log/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>First Test Post</title>
       <link>https://olifei.github.io/Oli-Log/posts/first/</link>
@@ -15,14 +15,6 @@
       <guid>https://olifei.github.io/Oli-Log/posts/first/</guid>
       <description>&lt;h1 id=&#34;first-test-post&#34;&gt;First test post&lt;/h1&gt;
 &lt;p&gt;This is my first test post.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Test</title>
-      <link>https://olifei.github.io/Oli-Log/docs/test/</link>
-      <pubDate>Fri, 20 Sep 2024 11:47:20 +0800</pubDate>
-      <guid>https://olifei.github.io/Oli-Log/docs/test/</guid>
-      <description>&lt;h3 id=&#34;this-is-a-test-page&#34;&gt;This is a test page&lt;/h3&gt;
-&lt;p&gt;This is a test page.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

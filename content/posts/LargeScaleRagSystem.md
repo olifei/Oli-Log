@@ -1,7 +1,7 @@
 +++
 title = 'Large Scale Rag System'
 date = 2024-09-25T16:15:37+08:00
-draft = true
+draft = false
 +++
 
 # 大规模RAG技术探索

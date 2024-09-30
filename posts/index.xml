@@ -6,8 +6,56 @@
     <description>Recent content in Posts on Oli&#39;Log</description>
     <generator>Hugo -- 0.134.3</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 20 Sep 2024 12:25:02 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 25 Sep 2024 16:15:37 +0800</lastBuildDate>
     <atom:link href="https://olifei.github.io/Oli-Log/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Large Scale Rag System</title>
+      <link>https://olifei.github.io/Oli-Log/posts/largescaleragsystem/</link>
+      <pubDate>Wed, 25 Sep 2024 16:15:37 +0800</pubDate>
+      <guid>https://olifei.github.io/Oli-Log/posts/largescaleragsystem/</guid>
+      <description>&lt;h1 id=&#34;大规模rag技术探索&#34;&gt;大规模RAG技术探索&lt;/h1&gt;
+&lt;h2 id=&#34;背景&#34;&gt;背景&lt;/h2&gt;
+&lt;p&gt;RAG（Retrieval-Augmented Generation）既检索增强生成，是一种搭配大语言模型的信息检索技术。它通过引用外部知识库，在用户输入Query的时候进行数据库内容的检索，大语言模型可以根据检索出的内容回答问题。这样可以提升回答的可信度和答案的定制能力，可以明显降低大语言模型的幻觉现象，非常适用于问答系统、文档生成、智能助手等多种自然语言处理任务。&lt;/p&gt;
+&lt;p&gt;在实际业务应用场景中，外挂数据库内容可能极为庞大，例如图书库有十亿级别的embedding规模。在面临大规模检索数据的同时，又要兼顾低延迟和索引精度。所以这对RAG系统的底层引擎提出了极大的挑战。&lt;/p&gt;
+&lt;h2 id=&#34;传统方案&#34;&gt;传统方案&lt;/h2&gt;
+&lt;p&gt;再文档搜索领域中，以Langchain为代表的诸多开源RAG方案和产品倾向于向量召回。向量召回相比于倒排索引具有：流程简单且语义泛化能力好的优势。但是，在知识库文答的场景下，基于embedding的搜素面临的问题有：精准性不足、无法应对专有名词、难以表达文档的额外属性、可能存在的关键词缺失。&lt;/p&gt;
+&lt;h2 id=&#34;大规模rag系统&#34;&gt;大规模RAG系统&lt;/h2&gt;
+&lt;p&gt;为了克服上述的不足，融合向量索引和倒排索引两种召回策略，采用多路召回的思路来拓展召回内容来源，以实现优势互补。&lt;/p&gt;
+&lt;h3 id=&#34;知识库的导入&#34;&gt;知识库的导入&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;文档解析：针对不同的文档格式，自己写的规则引擎，或者利用大模型文本提取，统一转化为txt文件。&lt;/li&gt;
+&lt;li&gt;字符递归分割：按照最大长度和指定分隔符，扫描文本递归进行分割。&lt;/li&gt;
+&lt;li&gt;摘要提取：保留书籍原文的基础上，通过大模型进行关键内容理解提取摘要。&lt;/li&gt;
+&lt;li&gt;语义分割：文档的切分方式影响找回内容的语义完整性和是否单一主题，按固定长度的切分方式会导致召回的Chunk内容不完整，或者同一Chunk中包含多个主题，最终导致回答不准确或者有歧义。语义切分Chunk则能保整内容的完整性和语义的单一性，有助于提高检索效率、增强检索相关性、优化生成质量和适应模型上下文窗口限制。有专门的文档语义分割模型可以使用或者精调。&lt;/li&gt;
+&lt;li&gt;中文分词：根据中文词典和中文词语进行分词，可以做到词典的热更新。&lt;/li&gt;
+&lt;li&gt;倒排索引：使用ES构建基于中英文分词的倒排索引，并基于BM25算法进行文本相似度检索，弥补在向量找回阶段可能存在的精准性不足、关键词缺失的问题。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;embedding&#34;&gt;Embedding&lt;/h3&gt;
+&lt;p&gt;可以通过场景搜索匹配数据对Embedding模型定向调优来提升业务场景下索引的召回率和准确率。&lt;/p&gt;
+&lt;p&gt;针对不同的业务场景，可以使用多种不同的embedding模型来做精调。&lt;/p&gt;
+&lt;h3 id=&#34;查询优化&#34;&gt;查询优化&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;固定句式：通过识别名词/动词，人名实体，前置的语义理解，来划分电商/历史等，载套用固定句式。比如针对一些特定场景，如历史，直接用的一些句式排版。&lt;/li&gt;
+&lt;li&gt;大模型扩写：使用大模型进行问题扩展，生成多样的query。&lt;/li&gt;
+&lt;li&gt;多路召回：使用大模型+固定句式进行查询扩写，再使用ES基于BM25的文本相似度的倒排索引检索和向量相似度检索，扩大召回结果。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;rerank重排&#34;&gt;Rerank重排&lt;/h3&gt;
+&lt;p&gt;由于采用了多路召回策略，不同的召回方法对结果的评分存在差异，因此需要对它们进行标准化处理。标准化是将数据调整到统一标准范围内，从而便于对多路召回的输出进行重新排序。为了实现这一目标，我们需要采用一个重排模型（Rerank Model）来对多路召回的结果进行优化排序。&lt;/p&gt;
+&lt;p&gt;Rerank模型的底层是基于bge-reranker模型并根据知识库的语料做了重新训练。ES多路召回的结果取Top x作为输入，发送给训练过的bge-reranker模型。&lt;/p&gt;
+&lt;h3 id=&#34;prompt工程&#34;&gt;Prompt工程&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;prompt模板：构建prompt模板库和调试工具。先使用统一的模板，再针对bad case进行调优。&lt;/li&gt;
+&lt;li&gt;针对bad cases：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;模型微调：针对特定的bad case，可以通过增加或者修改训练数据，对模型进行微调，使其更好地适应特殊情况。&lt;/li&gt;
+&lt;li&gt;惩罚机制：在模型训练的过程中，引入惩罚项。对于产生bad cases的预测结果给予更大的损失值。&lt;/li&gt;
+&lt;li&gt;黑名单制度：对于反复出现且难以通过模型改进解决的bad cases，可以将其加入黑名单，在实际应用中直接避免触发这些情况。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;为了确保评测的准确性和全面性，采用大模型与人工标注相结合的方式进行评测。&lt;/li&gt;
+&lt;/ol&gt;</description>
+    </item>
     <item>
       <title>First Test Post</title>
       <link>https://olifei.github.io/Oli-Log/posts/first/</link>
